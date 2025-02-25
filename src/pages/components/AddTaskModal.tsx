@@ -1,9 +1,11 @@
 import {FC} from "react";
 import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
 import {Task} from "../../types/base.ts";
+import {uuidv7} from "uuidv7";
 
 type Props = {
-    tasks: Task[],
+    tasks: Task[];
+    setTasks: (callback: (value: Task[]) => Task[]) => void,
     isModalOpen: boolean,
     onClose: () => void,
 }
@@ -14,26 +16,27 @@ type TaskFormType = {
     deadline: DatePickerProps['value'],
 }
 
-export const AddTaskModal: FC<Props> = ({tasks, isModalOpen, onClose}) => {
+export const AddTaskModal: FC<Props> = ({tasks, setTasks, isModalOpen, onClose}) => {
 
-    const [form] = Form.useForm()
+    const [form] = Form.useForm();
 
     const onSubmit = (values: TaskFormType) => {
-        tasks.push({
-            name: values.task,
-            description: values.description || null,
-            deadline: values.deadline ? String(values.deadline) : null,
-            completed: false,
+        setTasks(() => {
+            const editedTasks = [
+                ...tasks,
+                {
+                    id: uuidv7(),
+                    name: values.task,
+                    description: values.description || null,
+                    deadline: values.deadline ? String(values.deadline) : null,
+                    completed: false,
+                }
+            ]
+            localStorage.setItem('tasks', JSON.stringify(editedTasks))
+            return editedTasks
         });
-        console.log({
-            name: values.task,
-            description: values.description || null,
-            deadline: values.deadline ? String(values.deadline) : null,
-            completed: false,
-        })
         onClose();
     };
-
 
     return (
         <Modal
