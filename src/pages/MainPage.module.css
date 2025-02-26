@@ -4,3 +4,20 @@
     left: 50%;
     width: 100%;
 }
+
+.listItem {
+    font-size: 20px;
+}
+
+.actionButton {
+    width: 32px;
+    height: 32px;
+}
+
+.attentive {
+    color: orange;
+}
+
+.warned {
+    color: red;
+}
