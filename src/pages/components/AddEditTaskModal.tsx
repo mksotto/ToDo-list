@@ -12,13 +12,13 @@ type Props = {
     setTasks: (callback: (value: Task[]) => Task[]) => void,
     isAddModalOpen: boolean,
     onClose: () => void,
-}
+};
 
 type TaskFormType = {
     task: string,
     description?: string,
     deadline?: DatePickerProps['value'],
-}
+};
 
 export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasks, setTasks, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
@@ -67,7 +67,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
     const onCancel = () => {
         deleteEditableTask();
         onClose();
-    }
+    };
 
     return (
         <Modal

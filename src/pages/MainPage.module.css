@@ -2,11 +2,44 @@
     position: relative;
     top: 50%;
     left: 50%;
-    width: 100%;
+    width: 800px;
 }
 
+.list :global(.ant-list-footer) {
+    padding: 0;
+}
+
+
+
 .listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100% !important;
     font-size: 20px;
+}
+
+.checkbox {
+    margin-top: 6px;
+}
+
+.name {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.description {
+    white-space: pre-line !important;
+}
+
+.descriptionIcon {
+    margin-top: 6px;
+}
+
+.deadline {
+    margin-top: 14px;
+    font-size: 16px;
+    font-weight: 500;
 }
 
 .actionButton {
@@ -15,9 +48,13 @@
 }
 
 .attentive {
-    color: orange;
+    color: orange !important;
 }
 
 .warned {
-    color: red;
+    color: red !important;
+}
+
+.completed {
+    text-decoration: line-through;
 }

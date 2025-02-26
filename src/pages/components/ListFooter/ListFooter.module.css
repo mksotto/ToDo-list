@@ -1,0 +1,21 @@
+.tabs :global(.ant-tabs-nav) {
+    margin: 0;
+}
+
+.tabs :global(.ant-tabs-extra-content) {
+    /*padding-inline: 24px;*/
+}
+
+.itemsLeft {
+    padding-left: 24px;
+}
+
+.deleteCompleted {
+    cursor: pointer;
+    padding-right: 24px;
+    transition: all 0.3s;
+}
+
+.deleteCompleted:hover {
+    color: #4096ff;
+}
