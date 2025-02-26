@@ -1,9 +1,8 @@
 import {FC} from "react";
 import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
 import {Task} from "../../types/base.ts";
-import {uuidv7} from "uuidv7";
 import dayjs from "dayjs";
-import {LOCALSTORAGE_KEY} from "../../constants/constants.ts";
+import {useSetTasks} from "../utils/useSetTasks.ts";
 
 type Props = {
     editableTask: Task | null;
@@ -20,54 +19,16 @@ type TaskFormType = {
     deadline?: DatePickerProps['value'],
 }
 
-export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasks, setTasks, isAddModalOpen, onClose}) => {
+export const AddEditTaskModal: FC<Props> = () => {
     const [form] = Form.useForm();
+
+    const {onSubmit, onEdit, onCancel, editableTask, isAddModalOpen} = useSetTasks()
+
     const initialValues: TaskFormType | undefined = editableTask ? {
         task: editableTask.name,
         description: editableTask.description || '',
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
-    const onSubmit = (values: TaskFormType) => {
-        setTasks(() => {
-            const editedTasks = [
-                ...tasks,
-                {
-                    id: uuidv7(),
-                    name: values.task,
-                    description: values.description || null,
-                    deadline: values.deadline ? String(values.deadline) : null,
-                    completed: false,
-                }
-            ];
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(editedTasks));
-            return editedTasks;
-        });
-        onClose();
-    };
-    const onEdit = (values: TaskFormType) => {
-        setTasks(() => {
-            const editedTasks = tasks.map((t) => {
-                if (t.id === editableTask!.id) {
-                    return ({
-                        ...t,
-                        name: values.task,
-                        description: values.description || null,
-                        deadline: values.deadline ? String(values.deadline) : null,
-                    })
-                } else {
-                    return t
-                }
-            });
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(editedTasks));
-            return editedTasks;
-        });
-        deleteEditableTask();
-        onClose();
-    };
-    const onCancel = () => {
-        deleteEditableTask();
-        onClose();
-    }
 
     return (
         <Modal
