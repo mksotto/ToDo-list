@@ -6,16 +6,16 @@ import dayjs from "dayjs";
 import {LOCALSTORAGE_KEY} from "../../constants/constants.ts";
 
 type Props = {
-    editableTask: Task | null;
-    deleteEditableTask: () => void;
     tasks: Task[];
     setTasks: (callback: (value: Task[]) => Task[]) => void,
+    editableTask: Task | null;
+    deleteEditableTask: () => void;
     isAddModalOpen: boolean,
     onClose: () => void,
 };
 
 type TaskFormType = {
-    task: string,
+    name: string,
     description?: string,
     deadline?: DatePickerProps['value'],
 };
@@ -23,7 +23,7 @@ type TaskFormType = {
 export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasks, setTasks, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
     const initialValues: TaskFormType | undefined = editableTask ? {
-        task: editableTask.name,
+        name: editableTask.name,
         description: editableTask.description || '',
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
@@ -33,7 +33,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                 ...tasks,
                 {
                     id: uuidv7(),
-                    name: values.task,
+                    name: values.name,
                     description: values.description || null,
                     deadline: values.deadline ? String(values.deadline) : null,
                     completed: false,
@@ -44,13 +44,17 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
         });
         onClose();
     };
+    const onCancel = () => {
+        deleteEditableTask();
+        onClose();
+    };
     const onEdit = (values: TaskFormType) => {
         setTasks(() => {
             const editedTasks = tasks.map((t) => {
                 if (t.id === editableTask!.id) {
                     return ({
                         ...t,
-                        name: values.task,
+                        name: values.name,
                         description: values.description || null,
                         deadline: values.deadline ? String(values.deadline) : null,
                     })
@@ -61,14 +65,8 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
             localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(editedTasks));
             return editedTasks;
         });
-        deleteEditableTask();
-        onClose();
+        onCancel();
     };
-    const onCancel = () => {
-        deleteEditableTask();
-        onClose();
-    };
-
     return (
         <Modal
             title={editableTask ? 'Редактирование' : 'Добавить задачу'}
@@ -89,7 +87,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                 initialValues={initialValues}
             >
                 <Form.Item
-                    name='task'
+                    name='name'
                     label='Задача'
                     rules={[
                         {type: 'string', required: true, message: 'Введите название задачи'},
@@ -101,7 +99,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                     name='description'
                     label='Описание'
                 >
-                    <Input.TextArea placeholder='ggg' autoSize={{minRows: 4, maxRows: 6}} />
+                    <Input.TextArea autoSize={{minRows: 4, maxRows: 16}} />
                 </Form.Item>
                 <Form.Item
                     name='deadline'

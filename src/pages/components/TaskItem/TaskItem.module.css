@@ -1,0 +1,47 @@
+.listItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100% !important;
+    font-size: 20px;
+}
+
+.checkbox {
+    margin-top: 4px;
+}
+
+.name {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.description {
+    white-space: pre-line !important;
+}
+
+.descriptionIcon {
+    margin-top: 4px;
+}
+
+.deadline {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.actionButton {
+    width: 32px;
+    height: 32px;
+}
+
+.attentive {
+    color: orange !important;
+}
+
+.warned {
+    color: red !important;
+}
+
+.completed {
+    text-decoration: line-through;
+}

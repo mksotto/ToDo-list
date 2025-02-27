@@ -2,10 +2,6 @@
     margin: 0;
 }
 
-.tabs :global(.ant-tabs-extra-content) {
-    /*padding-inline: 24px;*/
-}
-
 .itemsLeft {
     padding-left: 24px;
 }

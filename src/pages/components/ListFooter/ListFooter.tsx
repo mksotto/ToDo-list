@@ -7,9 +7,11 @@ import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
 type Props = {
     tasks: Task[];
     setTasks: (tasks: Task[]) => void;
+    currentTab: string;
+    setCurrentTab: (tab: string) => void;
 };
 
-export const ListFooter: FC<Props> = ({tasks, setTasks}) => {
+export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTab}) => {
     const items: TabsProps['items'] = [
         {
             key: 'all',
@@ -52,6 +54,8 @@ export const ListFooter: FC<Props> = ({tasks, setTasks}) => {
             className={styles.tabs}
             tabPosition='bottom'
             items={items}
+            activeKey={currentTab}
+            onChange={setCurrentTab}
             centered
             tabBarExtraContent={{left: <ItemsLeft />, right: <ClearCompleted />}}
         />

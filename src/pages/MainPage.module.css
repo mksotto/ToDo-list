@@ -1,60 +1,13 @@
+.layout {
+    height: 100vh;
+    width: 100vw;
+    background-color: #242424;
+}
+
 .card {
-    position: relative;
-    top: 50%;
-    left: 50%;
-    width: 800px;
+    width: 40%;
 }
 
 .list :global(.ant-list-footer) {
     padding: 0;
-}
-
-
-
-.listItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100% !important;
-    font-size: 20px;
-}
-
-.checkbox {
-    margin-top: 6px;
-}
-
-.name {
-    font-size: 28px;
-    font-weight: 500;
-}
-
-.description {
-    white-space: pre-line !important;
-}
-
-.descriptionIcon {
-    margin-top: 6px;
-}
-
-.deadline {
-    margin-top: 14px;
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.actionButton {
-    width: 32px;
-    height: 32px;
-}
-
-.attentive {
-    color: orange !important;
-}
-
-.warned {
-    color: red !important;
-}
-
-.completed {
-    text-decoration: line-through;
 }
