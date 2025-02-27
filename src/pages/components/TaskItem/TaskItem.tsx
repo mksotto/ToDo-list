@@ -45,16 +45,16 @@ export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, s
     };
     const lessThanHourToGo = (task: Task) => {
         if (!task.completed) {
-            const dateNowPlusHour = Date.now() + 60 * 60 * 1000
-            const deadline = Date.parse(dayjs(task.deadline).format('YYYY-MM-DDTHH:mm:ss'))
-            return task.deadline ? deadline <= dateNowPlusHour : false
+            const dateNowPlusHour = Date.now() + 60 * 60 * 1000;
+            const deadline = Date.parse(dayjs(task.deadline).toISOString());
+            return task.deadline ? deadline <= dateNowPlusHour : false;
         }
     };
     const lessThanFifteenToGo = (task: Task) => {
         if (!task.completed) {
-            const dateNowPlusFifteenMinutes = Date.now() + 15 * 60 * 1000
-            const deadline = Date.parse(dayjs(task.deadline).format('YYYY-MM-DDTHH:mm:ss'))
-            return task.deadline ? deadline <= dateNowPlusFifteenMinutes : false
+            const dateNowPlusFifteenMinutes = Date.now() + 15 * 60 * 1000;
+            const deadline = Date.parse(dayjs(task.deadline).toISOString());
+            return task.deadline ? deadline <= dateNowPlusFifteenMinutes : false;
         }
     };
     const deadlineColor = {
