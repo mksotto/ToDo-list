@@ -39,7 +39,7 @@ export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTa
             const modifiedTasks = tasks.filter((t) => !t.completed);
             setTasks(modifiedTasks);
             localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
-        }
+        };
         return (
             <div
                 className={styles.deleteCompleted}
@@ -47,7 +47,7 @@ export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTa
             >
                 Clear completed
             </div>
-        )
+        );
     };
     return (
         <Tabs
