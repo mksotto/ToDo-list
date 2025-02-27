@@ -43,6 +43,7 @@ export const MainPage: FC = () => {
                     {Boolean(filterByCurrentTab(tasks).length)
                         && filterByCurrentTab(tasks).map((task) => (
                             <TaskItem
+                                key={task.id}
                                 task={task}
                                 tasks={tasks}
                                 setTasks={setTasks}
