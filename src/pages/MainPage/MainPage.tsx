@@ -3,8 +3,8 @@ import {Card, Flex, List,} from "antd";
 import {CardTitle} from "./components/CardTitle.tsx";
 import styles from "./MainPage.module.css";
 import {AddEditTaskModal} from "./components/AddEditTaskModal.tsx";
-import {Task} from "../types/base.ts";
-import {LOCALSTORAGE_KEY} from "../constants/constants.ts";
+import {Task} from "../../types/base.ts";
+import {LOCALSTORAGE_KEY} from "../../constants/constants.ts";
 import {ListFooter} from "./components/ListFooter/ListFooter.tsx";
 import {TaskItem} from "./components/TaskItem/TaskItem.tsx";
 

@@ -1,11 +1,11 @@
 import {FC} from "react";
-import {Task} from "../../../types/base.ts";
+import {Task} from "../../../../types/base.ts";
 import styles from "./TaskItem.module.css";
 import {Button, Checkbox, Flex, List, Popover} from "antd";
 import cx from "classnames";
 import {CloseOutlined, EditOutlined, InfoCircleOutlined} from "@ant-design/icons";
 import dayjs from "dayjs";
-import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
+import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
 
 type Props = {
     task: Task;
@@ -44,14 +44,14 @@ export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, s
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
     };
     const lessThanHourToGo = (task: Task) => {
-        if (!task.completed) {
+        if (task.deadline && !task.completed) {
             const dateNowPlusHour = Date.now() + 60 * 60 * 1000;
             const deadline = Date.parse(dayjs(task.deadline).toISOString());
             return task.deadline ? deadline <= dateNowPlusHour : false;
         }
     };
     const lessThanFifteenToGo = (task: Task) => {
-        if (!task.completed) {
+        if (task.deadline && !task.completed) {
             const dateNowPlusFifteenMinutes = Date.now() + 15 * 60 * 1000;
             const deadline = Date.parse(dayjs(task.deadline).toISOString());
             return task.deadline ? deadline <= dateNowPlusFifteenMinutes : false;

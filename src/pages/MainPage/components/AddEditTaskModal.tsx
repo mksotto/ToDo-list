@@ -1,9 +1,9 @@
 import {FC} from "react";
 import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
-import {Task} from "../../types/base.ts";
+import {Task} from "../../../types/base.ts";
 import {uuidv7} from "uuidv7";
 import dayjs from "dayjs";
-import {LOCALSTORAGE_KEY} from "../../constants/constants.ts";
+import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
 
 type Props = {
     tasks: Task[];

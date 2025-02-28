@@ -1,8 +1,8 @@
 import {Tabs, TabsProps} from "antd";
 import styles from './ListFooter.module.css';
 import {FC} from "react";
-import {Task} from "../../../types/base.ts";
-import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
+import {Task} from "../../../../types/base.ts";
+import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
 
 type Props = {
     tasks: Task[];
