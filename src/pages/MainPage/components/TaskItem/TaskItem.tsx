@@ -74,7 +74,7 @@ export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, s
                     checked={task.completed}
                     onChange={(e) => handleChangeProperty(task.id, 'completed', e.target.checked)}
                 />
-                <div className={styles.name}>{task.name}</div>
+                <div data-testid={`task with id ${task.id}`} className={styles.name}>{task.name}</div>
                 {task.description && <Popover title='Описание' content={popoverContent}>
                     <InfoCircleOutlined className={styles.descriptionIcon} />
                 </Popover>}

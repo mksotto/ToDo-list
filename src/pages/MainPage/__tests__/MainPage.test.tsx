@@ -12,18 +12,16 @@ describe('MainPage', () => {
 
     it('Check how it should render a task that has been added to the localStorage', () => {
         const tasks: Task[] = [
-            {id: '1', name: 'Test task', description: null, deadline: null, completed: false},
+            {id: '1', name: 'Test task 1', description: null, deadline: null, completed: false},
         ];
         localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(tasks));
         render(<MainPage />);
-        expect(screen.getByRole('generic', {name: 'Test task'})).toBeInTheDocument()
+        expect(screen.getByTestId('task with id 1')).toBeInTheDocument()
     })
 
     it('Should open modal on click add task button', () => {
-        const element = document.querySelector('[aria-label="plus"]');
-        const addTaskButtonElement = element?.parentElement;
         render(<MainPage />);
-        fireEvent.click(addTaskButtonElement!);
+        fireEvent.click(screen.getByTestId('add-task-button'));
         expect(screen.getByText(/Добавить задачу/i)).toBeInTheDocument();
     })
 })
