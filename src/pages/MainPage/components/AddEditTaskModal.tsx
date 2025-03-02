@@ -2,7 +2,6 @@ import {FC} from "react";
 import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
 import {Task} from "../../../types/base.ts";
 import {uuidv7} from "uuidv7";
-import dayjs from "dayjs";
 import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
 
 type Props = {
@@ -25,7 +24,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
         description: editableTask.description || '',
-        deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
+        deadline: editableTask.deadline || null,
     } : undefined;
     const onSubmit = (values: TaskFormType) => {
         setTasks(() => {
@@ -35,7 +34,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                     id: uuidv7(),
                     name: values.name,
                     description: values.description || null,
-                    deadline: values.deadline ? String(values.deadline) : null,
+                    deadline: values.deadline || null,
                     completed: false,
                 }
             ];
@@ -56,7 +55,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                         ...t,
                         name: values.name,
                         description: values.description || null,
-                        deadline: values.deadline ? String(values.deadline) : null,
+                        deadline: values.deadline || null,
                     })
                 } else {
                     return t
@@ -93,13 +92,13 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
                         {type: 'string', required: true, message: 'Введите название задачи'},
                     ]}
                 >
-                    <Input placeholder='Помыть машину' />
+                    <Input data-testid='set-task-name' placeholder='Помыть машину' />
                 </Form.Item>
                 <Form.Item
                     name='description'
                     label='Описание'
                 >
-                    <Input.TextArea autoSize={{minRows: 4, maxRows: 16}} />
+                    <Input.TextArea data-testid='set-task-description' autoSize={{minRows: 4, maxRows: 16}} />
                 </Form.Item>
                 <Form.Item
                     name='deadline'
