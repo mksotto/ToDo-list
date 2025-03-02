@@ -4,8 +4,8 @@ import styles from "./TaskItem.module.css";
 import {Button, Checkbox, Flex, List, Popover} from "antd";
 import cx from "classnames";
 import {CloseOutlined, EditOutlined, InfoCircleOutlined} from "@ant-design/icons";
-import dayjs from "dayjs";
 import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
+import dayjs from "dayjs";
 
 type Props = {
     task: Task;
@@ -74,9 +74,9 @@ export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, s
                     checked={task.completed}
                     onChange={(e) => handleChangeProperty(task.id, 'completed', e.target.checked)}
                 />
-                <div className={styles.name}>{task.name}</div>
+                <div data-testid={`${task.name}`} className={styles.name}>{task.name}</div>
                 {task.description && <Popover title='Описание' content={popoverContent}>
-                    <InfoCircleOutlined className={styles.descriptionIcon} />
+                    <InfoCircleOutlined data-testid='description' className={styles.descriptionIcon} />
                 </Popover>}
                 {task.deadline && <div className={styles.deadline}>до {dayjs(task.deadline).format('DD.MM.YYYY HH:mm')}</div>}
             </Flex>
