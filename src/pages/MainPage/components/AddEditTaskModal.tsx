@@ -3,6 +3,7 @@ import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
 import {Task} from "../../../types/base.ts";
 import {uuidv7} from "uuidv7";
 import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
+import dayjs from "dayjs";
 
 type Props = {
     tasks: Task[];
@@ -24,7 +25,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
         description: editableTask.description || '',
-        deadline: editableTask.deadline || null,
+        deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
     const onSubmit = (values: TaskFormType) => {
         setTasks(() => {
