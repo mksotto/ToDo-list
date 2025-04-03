@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "generate-types": "node generate-types.js",
     "dev": "vite",
     "start": "vite",
     "test": "vitest",
@@ -27,10 +28,13 @@
     "vitest": "^3.0.7"
   },
   "devDependencies": {
+    "@types/node": "^22.14.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "dotenv": "^16.4.7",
     "globals": "^15.15.0",
+    "swagger-typescript-api": "^13.0.28",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
   }
