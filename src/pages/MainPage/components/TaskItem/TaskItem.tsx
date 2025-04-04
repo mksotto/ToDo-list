@@ -1,62 +1,37 @@
 import {FC} from "react";
-import {Task} from "../../../../types/base.ts";
+import {Task} from "../../../../types/domain/todo-list.ts";
 import styles from "./TaskItem.module.css";
 import {Button, Checkbox, Flex, List, Popover} from "antd";
 import cx from "classnames";
 import {CloseOutlined, EditOutlined, InfoCircleOutlined} from "@ant-design/icons";
-import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
 import dayjs from "dayjs";
+import {tasksIdCompletedPut} from "../../../../api/tasks/tasksIdCompletedPut.ts";
+import {tasksIdDelete} from "../../../../api/tasks/tasksIdDelete.ts";
 
 type Props = {
     task: Task;
-    tasks: Task[];
-    setTasks: (tasks: Task[]) => void;
+    tasksRefetch: () => void;
     setIsAddModalOpen: (isOpen: boolean) => void;
     setEditableTask: (task: Task) => void;
 }
 
-export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, setEditableTask}) => {
-    const handleChangeProperty = <T extends keyof Task>(
+export const TaskItem: FC<Props> = ({task, tasksRefetch, setIsAddModalOpen, setEditableTask}) => {
+    const handleCompletion = (
         id: Task['id'],
-        property: T,
-        value: Task[T],
-    ) => {
-        const modifiedTasks = tasks.map((task) => {
-            if (task.id === id) {
-                return ({
-                    ...task,
-                    [property]: value,
-                })
-            } else {
-                return task
-            }
-        });
-        setTasks(modifiedTasks);
-        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
-    };
-    const handleDeleteTask = (task: Task) => {
-        const modifiedTasks = tasks.filter((t) => {
-            if (task.id !== t.id) {
-                return t
-            }
-        });
-        setTasks(modifiedTasks);
-        localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
-    };
-    const lessThanHourToGo = (task: Task) => {
+        value: Task['completed'],
+    ) => tasksIdCompletedPut(id, {completed: value as boolean}).then(tasksRefetch);
+
+    const handleDeleteTask = (task: Task) => tasksIdDelete(task.id).then(tasksRefetch);
+
+    const makeMinutesDebounce = (task: Task, minutes: number) => {
         if (task.deadline && !task.completed) {
-            const dateNowPlusHour = Date.now() + 60 * 60 * 1000;
-            const deadline = Date.parse(dayjs(task.deadline).toISOString());
-            return task.deadline ? deadline <= dateNowPlusHour : false;
+            const dateNowPlusDebounce = Date.now() + minutes * 60 * 1000;
+            const deadline = Date.parse(task.deadline);
+            return task.deadline ? deadline <= dateNowPlusDebounce : false;
         }
     };
-    const lessThanFifteenToGo = (task: Task) => {
-        if (task.deadline && !task.completed) {
-            const dateNowPlusFifteenMinutes = Date.now() + 15 * 60 * 1000;
-            const deadline = Date.parse(dayjs(task.deadline).toISOString());
-            return task.deadline ? deadline <= dateNowPlusFifteenMinutes : false;
-        }
-    };
+    const lessThanHourToGo = (task: Task) => makeMinutesDebounce(task, 60);
+    const lessThanFifteenToGo = (task: Task) => makeMinutesDebounce(task, 15);
     const deadlineColor = {
         [styles.attentive]: lessThanHourToGo(task),
         [styles.warned]: lessThanFifteenToGo(task),
@@ -72,7 +47,7 @@ export const TaskItem: FC<Props> = ({task, tasks, setTasks, setIsAddModalOpen, s
                 <Checkbox
                     className={styles.checkbox}
                     checked={task.completed}
-                    onChange={(e) => handleChangeProperty(task.id, 'completed', e.target.checked)}
+                    onChange={(e) => handleCompletion(task.id, e.target.checked)}
                 />
                 <div data-testid={`${task.name}`} className={styles.name}>{task.name}</div>
                 {task.description && <Popover title='Описание' content={popoverContent}>
