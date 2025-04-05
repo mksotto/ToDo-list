@@ -28,7 +28,7 @@ export const MainPage: PageType = () => {
     return (
         <Flex justify='center' align='center' className={styles.layout}>
             <Card
-                title={<CardTitle setIsAddModalOpen={setIsAddModalOpen} />}
+                title={<CardTitle tasksRefetch={tasksRefetch} setIsAddModalOpen={setIsAddModalOpen} />}
                 className={styles.card}
             >
                 <List
