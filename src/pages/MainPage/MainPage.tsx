@@ -1,15 +1,18 @@
-import {FC, useState} from "react";
+import {useState} from "react";
 import {Card, Flex, List,} from "antd";
 import {CardTitle} from "./components/CardTitle.tsx";
 import styles from "./MainPage.module.css";
 import {AddEditTaskModal} from "./components/AddEditTaskModal.tsx";
-import {Task} from "../../types/base.ts";
-import {LOCALSTORAGE_KEY} from "../../constants/constants.ts";
+import {Task} from "../../types/domain/todo-list.ts";
 import {ListFooter} from "./components/ListFooter/ListFooter.tsx";
 import {TaskItem} from "./components/TaskItem/TaskItem.tsx";
+import {useTasks} from "../../queries/useTasks.ts";
+import {PageType} from "../../types/PageType.ts";
+import {checkAuth} from "../../modules/checkAuth.ts";
 
-export const MainPage: FC = () => {
-    const [tasks, setTasks] = useState<Task[]>(JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY) || '[]'));
+export const MainPage: PageType = () => {
+    const {data: dataTasks, refetch: tasksRefetch} = useTasks();
+    const tasks = dataTasks || [];
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
     const [editableTask, setEditableTask] = useState<Task | null>(null);
     const [currentTab, setCurrentTab] = useState<string>('all');
@@ -34,7 +37,7 @@ export const MainPage: FC = () => {
                     footer={
                         <ListFooter
                             tasks={tasks}
-                            setTasks={setTasks}
+                            tasksRefetch={tasksRefetch}
                             currentTab={currentTab}
                             setCurrentTab={setCurrentTab}
                         />
@@ -45,8 +48,7 @@ export const MainPage: FC = () => {
                             <TaskItem
                                 key={task.id}
                                 task={task}
-                                tasks={tasks}
-                                setTasks={setTasks}
+                                tasksRefetch={tasksRefetch}
                                 setEditableTask={setEditableTask}
                                 setIsAddModalOpen={setIsAddModalOpen}
                             />
@@ -54,8 +56,7 @@ export const MainPage: FC = () => {
                     }
                 </List>
                 <AddEditTaskModal
-                    tasks={tasks}
-                    setTasks={setTasks}
+                    tasksRefetch={tasksRefetch}
                     editableTask={editableTask}
                     deleteEditableTask={() => setEditableTask(null)}
                     isAddModalOpen={isAddModalOpen}
@@ -65,3 +66,5 @@ export const MainPage: FC = () => {
         </Flex>
     );
 };
+
+MainPage.loader = checkAuth;
