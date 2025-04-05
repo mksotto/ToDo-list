@@ -1,17 +1,17 @@
 import {Tabs, TabsProps} from "antd";
 import styles from './ListFooter.module.css';
 import {FC} from "react";
-import {Task} from "../../../../types/base.ts";
-import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
+import {Task} from "../../../../types/domain/todo-list.ts";
+import {tasksIdDelete} from "../../../../api/tasks/tasksIdDelete.ts";
 
 type Props = {
     tasks: Task[];
-    setTasks: (tasks: Task[]) => void;
+    tasksRefetch: () => void;
     currentTab: string;
     setCurrentTab: (tab: string) => void;
 };
 
-export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTab}) => {
+export const ListFooter: FC<Props> = ({tasks, tasksRefetch, currentTab, setCurrentTab}) => {
     const items: TabsProps['items'] = [
         {
             key: 'all',
@@ -30,15 +30,18 @@ export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTa
         const activeItems = tasks.filter((t) => !t.completed)
         return (
             <div className={styles.itemsLeft}>
-                {activeItems.length} items left
+                {activeItems.length} {activeItems.length <= 1 ? 'item' : 'items'} left
             </div>
         )
     };
     const ClearCompleted: FC = () => {
         const handleDelete = () => {
-            const modifiedTasks = tasks.filter((t) => !t.completed);
-            setTasks(modifiedTasks);
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
+            const deleteCompleted  = tasks
+                .filter((t) => t.completed)
+                .map((t) => tasksIdDelete(t.id))
+            Promise.all(deleteCompleted)
+                .then(tasksRefetch)
+                .catch(e => console.error(e));
         };
         return (
             <div

@@ -51,9 +51,9 @@ export interface TaskPatch {
   /** @example "Go to the shop" */
   name?: string;
   /** @example "Buy carrot, bread and pineapple" */
-  description?: string;
+  description?: string | null;
   /** @format date-time */
-  deadline?: string;
+  deadline?: string | null;
 }
 
 export interface TaskCompleted {

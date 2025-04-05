@@ -12,15 +12,20 @@ export const AuthPage: FC = () => {
     const [form] = Form.useForm();
     const onLogin = async (values: AuthLoginPost) => {
         try {
-            await authLoginPost(values).then(() => navigate('/s'));
-            
+            await authLoginPost(values);
+            navigate('/');
         } catch (e) {
             console.error(e)
         }
+
     };
     const onSignup = async (values: AuthSignupPost) => {
-        await authSignupPost(values);
-        navigate('/');
+        try {
+            await authSignupPost(values);
+            navigate('/');
+        } catch (e) {
+            console.error(e)
+        }
     };
     return (
         <Flex justify='center' align='center' className={styles.layout}>

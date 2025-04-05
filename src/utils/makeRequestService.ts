@@ -1,3 +1,5 @@
+import {ApiError} from "../errors/ApiError.ts";
+
 type BaseRequestParams = {
     url: string;
     method: 'GET' | 'POST' | 'PATCH' | 'PUT' | 'DELETE';
@@ -30,4 +32,7 @@ export const makeRequestService = (baseUrl: string) => <T>({
         body: transformData(data),
         credentials: 'include',
     }
-).then(r => r.json());
+).then(r => {
+    if (!r.ok) throw new ApiError(r.status, r.statusText);
+    return r.headers.get('content-type') !== 'application/json; charset=utf-8' ? r.text() : r.json();
+});
