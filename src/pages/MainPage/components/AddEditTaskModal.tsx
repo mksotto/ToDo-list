@@ -4,7 +4,10 @@ import {Task} from "../../../types/domain/todo-list.ts";
 import dayjs from "dayjs";
 import {tasksPost} from "../../../api/tasks/tasksPost.ts";
 import {tasksIdPatch} from "../../../api/tasks/tasksIdPatch.ts";
-import {getNewOrUndefined} from "../../../utils/getNewOrUndefined.ts";
+import {getNewOrNullOrUndefined, getNewOrUndefined} from "../../../utils/getNewOrUndefined.ts";
+import {isApiError} from "../../../errors/ApiError.ts";
+import {useNavigate} from "react-router-dom";
+import {AUTH_BASE_URL} from "../../../constants/constants.ts";
 
 type Props = {
     tasksRefetch: () => void,
@@ -22,31 +25,46 @@ type TaskFormType = {
 
 export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasksRefetch, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
+    const navigate = useNavigate()
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
         description: editableTask.description || '',
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
-    const onCreate = (values: TaskFormType) => {
-        tasksPost({
-            name: values.name,
-            description: values.description,
-            deadline: values.deadline?.toISOString(),
-        }).then(tasksRefetch);
-        onClose();
+    const onCreate = async (values: TaskFormType) => {
+        try {
+            await tasksPost({
+                name: values.name,
+                description: values.description,
+                deadline: values.deadline?.toISOString(),
+            })
+            tasksRefetch()
+        } catch (e) {
+            if (isApiError(e) && e.code === 401) {
+                navigate(AUTH_BASE_URL);
+            }
+        } finally {
+            onClose();
+        }
     };
     const onCancel = () => {
         deleteEditableTask();
         onClose();
     };
-    const onEdit = (values: TaskFormType) => {
+    const onEdit = async (values: TaskFormType) => {
         if (!editableTask) return null;
-        tasksIdPatch(editableTask.id, {
-            name: getNewOrUndefined(editableTask.name, values.name),
-            description: getNewOrUndefined(editableTask.description || undefined, values.description),
-            deadline: getNewOrUndefined(editableTask.deadline || undefined, values.deadline?.toISOString()),
-        }).then(tasksRefetch);
-        onCancel();
+        try {
+            await tasksIdPatch(editableTask.id, {
+                name: getNewOrUndefined(editableTask.name, values.name),
+                description: getNewOrNullOrUndefined(editableTask.description, values.description),
+                deadline: getNewOrNullOrUndefined(editableTask.deadline, values.deadline?.toISOString()),
+            });
+            tasksRefetch();
+        } catch (e) {
+            console.error(e)
+        } finally {
+            onCancel();
+        }
     };
     return (
         <Modal

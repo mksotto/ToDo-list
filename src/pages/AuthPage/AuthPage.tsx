@@ -5,6 +5,7 @@ import {Button, Card, Flex, Form, Input} from "antd";
 import styles from './AuthPage.module.css'
 import {AuthLoginPost, AuthSignupPost} from "../../types/domain/todo-list.ts";
 import {useNavigate} from "react-router-dom";
+import {BASE_URL} from "../../constants/constants.ts";
 
 export const AuthPage: FC = () => {
     const [isLogin, setIsLogin] = useState<boolean>(true);
@@ -13,7 +14,7 @@ export const AuthPage: FC = () => {
     const onLogin = async (values: AuthLoginPost) => {
         try {
             await authLoginPost(values);
-            navigate('/');
+            navigate(BASE_URL);
         } catch (e) {
             console.error(e)
         }
@@ -22,7 +23,7 @@ export const AuthPage: FC = () => {
     const onSignup = async (values: AuthSignupPost) => {
         try {
             await authSignupPost(values);
-            navigate('/');
+            navigate(BASE_URL);
         } catch (e) {
             console.error(e)
         }

@@ -1,18 +1,20 @@
 import {createBrowserRouter, RouteObject} from "react-router-dom";
-import {FC} from "react";
 import {MainPage} from './pages/MainPage/MainPage.tsx';
 import {AuthPage} from './pages/AuthPage/AuthPage.tsx';
+import {PageType} from "./types/PageType.ts";
+import {AUTH_BASE_URL, BASE_URL} from "./constants/constants.ts";
 
-const path = (path: string, Page: FC): RouteObject => ({
+const path = (path: string, Page: PageType): RouteObject => ({
     path,
     element: <Page />,
+    loader: Page.loader
 });
 
 export const router = createBrowserRouter([
     {
         children: [
-            path('/', MainPage),
-            path('/auth', AuthPage),
+            path(BASE_URL, MainPage),
+            path(AUTH_BASE_URL, AuthPage),
         ]
     }
-])
+]);

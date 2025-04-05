@@ -16,12 +16,15 @@ type Props = {
 }
 
 export const TaskItem: FC<Props> = ({task, tasksRefetch, setIsAddModalOpen, setEditableTask}) => {
-    const handleCompletion = (
-        id: Task['id'],
-        value: Task['completed'],
-    ) => tasksIdCompletedPut(id, {completed: value as boolean}).then(tasksRefetch);
+    const handleCompletion = async (id: Task['id'], value: boolean) =>
+        tasksIdCompletedPut(id, {completed: value})
+            .then(tasksRefetch)
+            .catch(e => console.error(e));
 
-    const handleDeleteTask = (task: Task) => tasksIdDelete(task.id).then(tasksRefetch);
+    const handleDeleteTask = async (task: Task) =>
+        tasksIdDelete(task.id)
+            .then(tasksRefetch)
+            .catch(e => console.error(e));
 
     const makeMinutesDebounce = (task: Task, minutes: number) => {
         if (task.deadline && !task.completed) {
