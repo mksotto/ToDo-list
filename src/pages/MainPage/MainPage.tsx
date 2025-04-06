@@ -51,12 +51,12 @@ export const MainPage: PageType = () => {
                         ))
                     }
                 </List>
-                {editableTask && <AddEditTaskModal
+                <AddEditTaskModal
                     editableTask={editableTask}
                     deleteEditableTask={() => setEditableTask(null)}
                     isAddModalOpen={isAddModalOpen}
                     onClose={() => setIsAddModalOpen(false)}
-                />}
+                />
             </Card>
         </Flex>
     );

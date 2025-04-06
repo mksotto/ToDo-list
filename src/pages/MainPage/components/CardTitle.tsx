@@ -52,10 +52,7 @@ export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
                 <Button
                     data-testid='add-task-button'
                     style={{width: 32}}
-                    onClick={() => {
-                        setIsAddModalOpen(true)
-                        console.log('click')
-                    }}
+                    onClick={() => setIsAddModalOpen(true)}
                 >
                     <PlusOutlined/>
                 </Button>
