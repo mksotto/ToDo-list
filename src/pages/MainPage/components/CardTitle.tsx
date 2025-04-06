@@ -1,6 +1,6 @@
 import {FC} from "react";
 import {Button, Flex, Popover, Typography} from "antd";
-import {LogoutOutlined, PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
+import {PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
 import {authDelete} from "../../../api/auth/authDelete.ts";
 import {useNavigate} from "react-router-dom";
 import {useTasks} from "../../../queries/useTasks.ts";
@@ -21,20 +21,10 @@ export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
         }
     };
     const content = (
-        <Flex vertical gap={8}>
-            <Button type='dashed' onClick={() => navigate('/auth')}>
-                <UserSwitchOutlined />
-                Change user
-            </Button>
-            <Button
-                danger
-                type='primary'
-                onClick={onLogout}
-            >
-                <LogoutOutlined />
-                Log out
-            </Button>
-        </Flex>
+        <Button type='dashed' danger onClick={() => onLogout().then(() => navigate('/auth'))}>
+            <UserSwitchOutlined />
+            Change user
+        </Button>
     );
     const loggedIn = (
         <Popover placement='bottomRight' trigger='click' arrow={false} content={content}>
