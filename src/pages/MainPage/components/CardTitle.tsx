@@ -3,18 +3,19 @@ import {Button, Flex, Popover, Typography} from "antd";
 import {LogoutOutlined, PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
 import {authDelete} from "../../../api/auth/authDelete.ts";
 import {useNavigate} from "react-router-dom";
+import {useTasks} from "../../../queries/useTasks.ts";
 
 type Props = {
-    tasksRefetch: () => void;
     setIsAddModalOpen: (isOpen: boolean) => void;
 };
 
-export const CardTitle: FC<Props> = ({tasksRefetch, setIsAddModalOpen}) => {
+export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
     const navigate = useNavigate();
+    const {refetch} = useTasks();
     const onLogout = async () => {
         try {
             await authDelete();
-            tasksRefetch();
+            void refetch();
         } catch (e) {
             console.error(e)
         }
@@ -51,7 +52,10 @@ export const CardTitle: FC<Props> = ({tasksRefetch, setIsAddModalOpen}) => {
                 <Button
                     data-testid='add-task-button'
                     style={{width: 32}}
-                    onClick={() => setIsAddModalOpen(true)}
+                    onClick={() => {
+                        setIsAddModalOpen(true)
+                        console.log('click')
+                    }}
                 >
                     <PlusOutlined/>
                 </Button>

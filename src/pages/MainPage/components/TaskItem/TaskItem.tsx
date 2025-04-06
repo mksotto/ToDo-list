@@ -7,23 +7,25 @@ import {CloseOutlined, EditOutlined, InfoCircleOutlined} from "@ant-design/icons
 import dayjs from "dayjs";
 import {tasksIdCompletedPut} from "../../../../api/tasks/tasksIdCompletedPut.ts";
 import {tasksIdDelete} from "../../../../api/tasks/tasksIdDelete.ts";
+import {useTasks} from "../../../../queries/useTasks.ts";
 
 type Props = {
     task: Task;
-    tasksRefetch: () => void;
     setIsAddModalOpen: (isOpen: boolean) => void;
     setEditableTask: (task: Task) => void;
 }
 
-export const TaskItem: FC<Props> = ({task, tasksRefetch, setIsAddModalOpen, setEditableTask}) => {
-    const handleCompletion = async (id: Task['id'], value: boolean) =>
+export const TaskItem: FC<Props> = ({task, setIsAddModalOpen, setEditableTask}) => {
+    const {refetch} = useTasks();
+
+    const handleCompletion = (id: Task['id'], value: boolean) =>
         tasksIdCompletedPut(id, {completed: value})
-            .then(tasksRefetch)
+            .then(() => refetch())
             .catch(e => console.error(e));
 
-    const handleDeleteTask = async (task: Task) =>
+    const handleDeleteTask = (task: Task) =>
         tasksIdDelete(task.id)
-            .then(tasksRefetch)
+            .then(() => refetch())
             .catch(e => console.error(e));
 
     const makeMinutesDebounce = (task: Task, minutes: number) => {

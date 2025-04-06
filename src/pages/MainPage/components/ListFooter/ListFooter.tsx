@@ -1,17 +1,16 @@
 import {Tabs, TabsProps} from "antd";
 import styles from './ListFooter.module.css';
 import {FC} from "react";
-import {Task} from "../../../../types/domain/todo-list.ts";
 import {tasksCompletedDelete} from "../../../../api/tasks/tasksCompletedDelete.ts";
+import {useTasks} from "../../../../queries/useTasks.ts";
 
 type Props = {
-    tasks: Task[];
-    tasksRefetch: () => void;
     currentTab: string;
     setCurrentTab: (tab: string) => void;
 };
 
-export const ListFooter: FC<Props> = ({tasks, tasksRefetch, currentTab, setCurrentTab}) => {
+export const ListFooter: FC<Props> = ({currentTab, setCurrentTab}) => {
+    const {data: tasks, refetch} = useTasks();
     const items: TabsProps['items'] = [
         {
             key: 'all',
@@ -38,7 +37,7 @@ export const ListFooter: FC<Props> = ({tasks, tasksRefetch, currentTab, setCurre
         const handleDelete = async () => {
             try {
                 await tasksCompletedDelete();
-                tasksRefetch();
+                void refetch();
             } catch (e) {
                 console.error(e);
             }

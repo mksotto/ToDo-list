@@ -8,10 +8,10 @@ import {getNewOrNullOrUndefined, getNewOrUndefined} from "../../../utils/getNewO
 import {isApiError} from "../../../errors/ApiError.ts";
 import {useNavigate} from "react-router-dom";
 import {AUTH_BASE_URL} from "../../../constants/constants.ts";
+import {useTasks} from "../../../queries/useTasks.ts";
 
 type Props = {
-    tasksRefetch: () => void,
-    editableTask: Task | null;
+    editableTask: Task;
     deleteEditableTask: () => void;
     isAddModalOpen: boolean,
     onClose: () => void,
@@ -19,26 +19,27 @@ type Props = {
 
 type TaskFormType = {
     name: string,
-    description?: string,
-    deadline?: DatePickerProps['value'],
+    description: string,
+    deadline: DatePickerProps['value'] | null,
 };
 
-export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasksRefetch, isAddModalOpen, onClose}) => {
+export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
-    const navigate = useNavigate()
-    const initialValues: TaskFormType | undefined = editableTask ? {
+    const {refetch} = useTasks();
+    const navigate = useNavigate();
+    const initialValues: TaskFormType = {
         name: editableTask.name,
         description: editableTask.description || '',
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
-    } : undefined;
+    };
     const onCreate = async (values: TaskFormType) => {
         try {
             await tasksPost({
                 name: values.name,
                 description: values.description,
                 deadline: values.deadline?.toISOString(),
-            })
-            tasksRefetch()
+            });
+            void refetch();
         } catch (e) {
             if (isApiError(e) && e.code === 401) {
                 navigate(AUTH_BASE_URL);
@@ -51,21 +52,15 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
         deleteEditableTask();
         onClose();
     };
-    const onEdit = async (values: TaskFormType) => {
-        if (!editableTask) return null;
-        try {
-            await tasksIdPatch(editableTask.id, {
-                name: getNewOrUndefined(editableTask.name, values.name),
-                description: getNewOrNullOrUndefined(editableTask.description, values.description),
-                deadline: getNewOrNullOrUndefined(editableTask.deadline, values.deadline?.toISOString()),
-            });
-            tasksRefetch();
-        } catch (e) {
-            console.error(e)
-        } finally {
-            onCancel();
-        }
-    };
+    const onEdit = (values: TaskFormType) =>
+        tasksIdPatch(editableTask.id, {
+            name: getNewOrUndefined(editableTask.name, values.name),
+            description: getNewOrNullOrUndefined(editableTask.description, values.description),
+            deadline: getNewOrNullOrUndefined(editableTask.deadline, values.deadline?.toISOString()),
+        })
+            .then(() => refetch())
+            .catch(e => console.error(e))
+            .finally(onCancel);
     return (
         <Modal
             title={editableTask ? 'Редактирование' : 'Добавить задачу'}

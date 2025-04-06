@@ -11,8 +11,7 @@ import {PageType} from "../../types/PageType.ts";
 import {checkAuth} from "../../modules/checkAuth.ts";
 
 export const MainPage: PageType = () => {
-    const {data: dataTasks, refetch: tasksRefetch} = useTasks();
-    const tasks = dataTasks || [];
+    const {data: tasks} = useTasks();
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
     const [editableTask, setEditableTask] = useState<Task | null>(null);
     const [currentTab, setCurrentTab] = useState<string>('all');
@@ -28,7 +27,7 @@ export const MainPage: PageType = () => {
     return (
         <Flex justify='center' align='center' className={styles.layout}>
             <Card
-                title={<CardTitle tasksRefetch={tasksRefetch} setIsAddModalOpen={setIsAddModalOpen} />}
+                title={<CardTitle setIsAddModalOpen={setIsAddModalOpen} />}
                 className={styles.card}
             >
                 <List
@@ -36,8 +35,6 @@ export const MainPage: PageType = () => {
                     bordered
                     footer={
                         <ListFooter
-                            tasks={tasks}
-                            tasksRefetch={tasksRefetch}
                             currentTab={currentTab}
                             setCurrentTab={setCurrentTab}
                         />
@@ -48,20 +45,18 @@ export const MainPage: PageType = () => {
                             <TaskItem
                                 key={task.id}
                                 task={task}
-                                tasksRefetch={tasksRefetch}
                                 setEditableTask={setEditableTask}
                                 setIsAddModalOpen={setIsAddModalOpen}
                             />
                         ))
                     }
                 </List>
-                <AddEditTaskModal
-                    tasksRefetch={tasksRefetch}
+                {editableTask && <AddEditTaskModal
                     editableTask={editableTask}
                     deleteEditableTask={() => setEditableTask(null)}
                     isAddModalOpen={isAddModalOpen}
                     onClose={() => setIsAddModalOpen(false)}
-                />
+                />}
             </Card>
         </Flex>
     );
