@@ -6,6 +6,7 @@
 
 .card {
     width: 40%;
+    border-radius: 24px;
 }
 
 .list :global(.ant-list-footer) {

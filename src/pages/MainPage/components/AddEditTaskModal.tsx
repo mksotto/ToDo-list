@@ -5,10 +5,10 @@ import dayjs from "dayjs";
 import {tasksPost} from "../../../api/tasks/tasksPost.ts";
 import {tasksIdPatch} from "../../../api/tasks/tasksIdPatch.ts";
 import {getNewOrNullOrUndefined, getNewOrUndefined} from "../../../utils/getNewOrUndefined.ts";
-import {isApiError} from "../../../errors/ApiError.ts";
 import {useNavigate} from "react-router-dom";
 import {AUTH_BASE_URL} from "../../../constants/constants.ts";
 import {useTasks} from "../../../queries/useTasks.ts";
+import {useProfile} from "../../../stores/ProfileStore.ts";
 
 type Props = {
     editableTask: Task | null;
@@ -25,41 +25,38 @@ type TaskFormType = {
 
 export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
-    const {refetch} = useTasks();
+    const {profile} = useProfile();
+    const {refetch} = useTasks(profile);
     const navigate = useNavigate();
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
         description: editableTask.description || '',
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
-    const onCreate = async (values: TaskFormType) => {
-        try {
-            await tasksPost({
-                name: values.name,
-                description: values.description,
-                deadline: values.deadline?.toISOString(),
-            });
-            void refetch();
-        } catch (e) {
-            if (isApiError(e) && e.code === 401) {
-                navigate(AUTH_BASE_URL);
-            }
-        } finally {
-            onClose();
-        }
-    };
     const onCancel = () => {
         deleteEditableTask();
         onClose();
     };
+    const onCreate = (values: TaskFormType) => {
+        if (!profile) return navigate(AUTH_BASE_URL)
+        const newTask = {
+            name: values.name,
+            description: values.description,
+            deadline: values.deadline?.toISOString(),
+        };
+        tasksPost(newTask)
+            .then(() => refetch())
+            .catch(e => console.error(e))
+            .finally(onClose);
+    };
     const onEdit = (values: TaskFormType) => {
         if (!editableTask) return null;
-        const edittedTask = {
+        const editedTask = {
             name: getNewOrUndefined(editableTask.name, values.name),
             description: getNewOrNullOrUndefined(editableTask.description, values.description),
             deadline: getNewOrNullOrUndefined(editableTask.deadline, values.deadline?.toISOString()),
-        }
-        return tasksIdPatch(editableTask.id, edittedTask)
+        };
+        tasksIdPatch(editableTask.id, editedTask)
             .then(() => refetch())
             .catch(e => console.error(e))
             .finally(onCancel);

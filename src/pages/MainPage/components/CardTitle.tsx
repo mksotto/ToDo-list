@@ -1,9 +1,10 @@
 import {FC} from "react";
 import {Button, Flex, Popover, Typography} from "antd";
-import {PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
-import {authDelete} from "../../../api/auth/authDelete.ts";
-import {useNavigate} from "react-router-dom";
-import {useTasks} from "../../../queries/useTasks.ts";
+import {EditOutlined, LoginOutlined, PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
+import {Navigate, useNavigate} from "react-router-dom";
+import {useProfile} from "../../../stores/ProfileStore.ts";
+import {AUTH_BASE_URL} from "../../../constants/constants.ts";
+// import {useQueryClient} from "@tanstack/react-query";
 
 type Props = {
     setIsAddModalOpen: (isOpen: boolean) => void;
@@ -11,29 +12,40 @@ type Props = {
 
 export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
     const navigate = useNavigate();
-    const {refetch} = useTasks();
-    const onLogout = async () => {
-        try {
-            await authDelete();
-            void refetch();
-        } catch (e) {
-            console.error(e)
-        }
-    };
+    const {profile: user, logout: onLogout} = useProfile();
+    // const queryClient = useQueryClient();
+    // const onLogout = () => {
+    //     void logout();
+    //     // return (
+    //     //
+    //     // )
+    // };
     const content = (
-        <Button type='dashed' danger onClick={() => onLogout().then(() => navigate('/auth'))}>
-            <UserSwitchOutlined />
-            Change user
-        </Button>
+        <Flex vertical gap={8}>
+            <Button type='dashed'>
+                <EditOutlined />
+                Редактировать
+            </Button>
+            <Button type='dashed' danger onClick={onLogout}>
+                <UserSwitchOutlined />
+                Change user
+            </Button>
+        </Flex>
     );
     const loggedIn = (
         <Popover placement='bottomRight' trigger='click' arrow={false} content={content}>
             <Button>
                 <UserOutlined />
-                Admin
+                {user?.username}
             </Button>
         </Popover>
-    )
+    );
+    const unloggedIn = (
+        <Button onClick={() => navigate(AUTH_BASE_URL)}>
+            <LoginOutlined />
+            Войти
+        </Button>
+    );
     return (
         <Flex align='center' justify='space-between' gap={24}>
             <Typography.Title
@@ -46,8 +58,10 @@ export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
                 >
                     <PlusOutlined/>
                 </Button>
-                {loggedIn}
+                {user ? loggedIn : unloggedIn}
             </Flex>
+            {/*<Navigate to={AUTH_BASE_URL}/>*/}
         </Flex>
-    )
+
+    );
 };

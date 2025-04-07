@@ -1,15 +1,20 @@
 import {authGet} from "../api/auth/authGet.ts";
-import {redirect} from "react-router-dom";
-import {AUTH_BASE_URL} from "../constants/constants.ts";
+import {useProfile} from "../stores/ProfileStore.ts";
+import {isApiError} from "../errors/ApiError.ts";
 
 export const checkAuth = async () => {
+    const profile = useProfile.getState().profile;
+    if (profile) return null;
     try {
         const profile = await authGet();
         if (profile) {
+            useProfile.setState({profile});
             return null;
         }
-        return redirect(AUTH_BASE_URL)
-    } catch {
-        return redirect(AUTH_BASE_URL)
+        return null
+    } catch (e) {
+        if (isApiError(e) && e.code === 401) return null;
+        console.error(e);
     }
+    return null;
 };

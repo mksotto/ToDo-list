@@ -9,9 +9,11 @@ import {TaskItem} from "./components/TaskItem/TaskItem.tsx";
 import {useTasks} from "../../queries/useTasks.ts";
 import {PageType} from "../../types/PageType.ts";
 import {checkAuth} from "../../modules/checkAuth.ts";
+import {useProfile} from "../../stores/ProfileStore.ts";
 
 export const MainPage: PageType = () => {
-    const {data: tasks} = useTasks();
+    const {profile} = useProfile();
+    const {data: tasks} = useTasks(profile);
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
     const [editableTask, setEditableTask] = useState<Task | null>(null);
     const [currentTab, setCurrentTab] = useState<string>('all');

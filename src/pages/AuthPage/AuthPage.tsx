@@ -11,23 +11,10 @@ export const AuthPage: FC = () => {
     const [isLogin, setIsLogin] = useState<boolean>(true);
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const onLogin = async (values: AuthLoginPost) => {
-        try {
-            await authLoginPost(values);
-            navigate(BASE_URL);
-        } catch (e) {
-            console.error(e)
-        }
-
-    };
-    const onSignup = async (values: AuthSignupPost) => {
-        try {
-            await authSignupPost(values);
-            navigate(BASE_URL);
-        } catch (e) {
-            console.error(e)
-        }
-    };
+    const onLogin = async (values: AuthLoginPost) =>
+        authLoginPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
+    const onSignup = async (values: AuthSignupPost) =>
+        authSignupPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
     return (
         <Flex justify='center' align='center' className={styles.layout}>
             <Card
