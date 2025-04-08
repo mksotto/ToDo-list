@@ -49,7 +49,7 @@ export const AuthPage: FC = () => {
                         name='email'
                         rules={[{required: true, message: 'Введите e-mail'}]}
                     >
-                        <Input/>
+                        <Input />
                     </Form.Item>}
                     <Form.Item
                         label='Password'
