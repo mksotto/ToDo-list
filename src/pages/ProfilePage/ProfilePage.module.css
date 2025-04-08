@@ -9,6 +9,6 @@
   border-radius: 24px;
 }
 
-:global(.ant-form-item) {
-  margin-bottom: 0;
+.passwordItem {
+  margin-bottom: 8px;
 }

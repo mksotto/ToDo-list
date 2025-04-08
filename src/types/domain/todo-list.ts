@@ -35,6 +35,15 @@ export interface AuthLoginPost {
   password: string;
 }
 
+export interface AuthPatch {
+  /** @example "dylandoe" */
+  username?: string;
+  /** @example "Qwerty123" */
+  password: string;
+  /** @example "Qwerty123" */
+  new_password?: string;
+}
+
 export interface Task {
   /** @format uuid */
   id: string;
