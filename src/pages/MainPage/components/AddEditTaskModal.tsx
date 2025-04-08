@@ -19,18 +19,18 @@ type Props = {
 
 type TaskFormType = {
     name: string,
-    description: string,
+    description: string | null,
     deadline: DatePickerProps['value'] | null,
 };
 
 export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
     const {profile} = useProfile();
-    const {refetch} = useTasks(profile);
+    const {refetch} = useTasks();
     const navigate = useNavigate();
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
-        description: editableTask.description || '',
+        description: editableTask.description,
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
     const onCancel = () => {
@@ -41,7 +41,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, i
         if (!profile) return navigate(AUTH_BASE_URL)
         const newTask = {
             name: values.name,
-            description: values.description,
+            description: values.description || undefined,
             deadline: values.deadline?.toISOString(),
         };
         tasksPost(newTask)

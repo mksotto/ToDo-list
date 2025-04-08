@@ -13,24 +13,25 @@ import {useProfile} from "../../stores/ProfileStore.ts";
 
 export const MainPage: PageType = () => {
     const {profile} = useProfile();
-    const {data: tasks} = useTasks(profile);
+    const {data: tasks, isFetched} = useTasks();
     const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
     const [editableTask, setEditableTask] = useState<Task | null>(null);
     const [currentTab, setCurrentTab] = useState<string>('all');
     const filterByCurrentTab = (t: Task[]) => {
         if (currentTab === 'completed') {
-            return t.filter((task) => task.completed)
+            return t.filter((task) => task.completed);
         }
         if (currentTab === 'active') {
-            return t.filter((task) => !task.completed)
+            return t.filter((task) => !task.completed);
         }
-        return t
+        return t;
     };
     return (
         <Flex justify='center' align='center' className={styles.layout}>
             <Card
                 title={<CardTitle setIsAddModalOpen={setIsAddModalOpen} />}
                 className={styles.card}
+                loading={Boolean(profile) && !isFetched}
             >
                 <List
                     className={styles.list}

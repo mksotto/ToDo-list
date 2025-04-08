@@ -1,10 +1,9 @@
 import {FC} from "react";
 import {Button, Flex, Popover, Typography} from "antd";
 import {EditOutlined, LoginOutlined, PlusOutlined, UserOutlined, UserSwitchOutlined} from "@ant-design/icons";
-import {Navigate, useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useProfile} from "../../../stores/ProfileStore.ts";
-import {AUTH_BASE_URL} from "../../../constants/constants.ts";
-// import {useQueryClient} from "@tanstack/react-query";
+import {AUTH_BASE_URL, PROFILE_BASE_URL} from "../../../constants/constants.ts";
 
 type Props = {
     setIsAddModalOpen: (isOpen: boolean) => void;
@@ -12,17 +11,11 @@ type Props = {
 
 export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
     const navigate = useNavigate();
-    const {profile: user, logout: onLogout} = useProfile();
-    // const queryClient = useQueryClient();
-    // const onLogout = () => {
-    //     void logout();
-    //     // return (
-    //     //
-    //     // )
-    // };
+    const {profile: user} = useProfile();
+    const onLogout = () => navigate(AUTH_BASE_URL, {state: {logout: true}});
     const content = (
         <Flex vertical gap={8}>
-            <Button type='dashed'>
+            <Button type='dashed' onClick={() => navigate(PROFILE_BASE_URL)}>
                 <EditOutlined />
                 Редактировать
             </Button>
@@ -60,8 +53,6 @@ export const CardTitle: FC<Props> = ({setIsAddModalOpen}) => {
                 </Button>
                 {user ? loggedIn : unloggedIn}
             </Flex>
-            {/*<Navigate to={AUTH_BASE_URL}/>*/}
         </Flex>
-
     );
 };
