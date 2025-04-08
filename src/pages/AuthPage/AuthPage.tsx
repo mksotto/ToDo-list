@@ -1,16 +1,24 @@
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {authLoginPost} from "../../api/auth/authLoginPost.ts";
 import {authSignupPost} from "../../api/auth/authSignupPost.ts";
 import {Button, Card, Flex, Form, Input} from "antd";
 import styles from './AuthPage.module.css'
 import {AuthLoginPost, AuthSignupPost} from "../../types/domain/todo-list.ts";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {BASE_URL} from "../../constants/constants.ts";
+import {useProfile} from "../../stores/ProfileStore.ts";
 
 export const AuthPage: FC = () => {
     const [isLogin, setIsLogin] = useState<boolean>(true);
+    const location = useLocation();
     const navigate = useNavigate();
+    const {profile, logout} = useProfile();
     const [form] = Form.useForm();
+    useEffect(() => {
+        if (location.state?.logout && profile) {
+            void logout();
+        }
+    }, [location.state]);
     const onLogin = async (values: AuthLoginPost) =>
         authLoginPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
     const onSignup = async (values: AuthSignupPost) =>
