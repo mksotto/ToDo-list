@@ -18,7 +18,17 @@ export const AuthPage: FC = () => {
         if (location.state?.logout && profile) {
             void logout();
         }
+        if (location.state?.username) {
+            form.setFieldValue('username', location.state.username);
+        }
     }, [location.state]);
+    // useEffect(() => {
+    //     if (location.state?.username && isLogin) {
+    //         form.setFieldValue('username', location.state.username);
+    //     } else {
+    //         form.resetFields(['username']);
+    //     }
+    // }, [location.state, isLogin]);
     const onLogin = async (values: AuthLoginPost) =>
         authLoginPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
     const onSignup = async (values: AuthSignupPost) =>

@@ -7,6 +7,8 @@ import {authPatch} from "../../api/auth/authPatch.ts";
 import {getNewOrUndefined} from "../../utils/getNewOrUndefined.ts";
 import {authGet} from "../../api/auth/authGet.ts";
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {AUTH_BASE_URL} from "../../constants/constants.ts";
 
 type EditUserFormType = {
     password: string;
@@ -19,16 +21,28 @@ const {Title, Paragraph} = Typography;
 export const ProfilePage: PageType = () => {
     const {profile, setProfile} = useProfile();
     const [form] = Form.useForm();
-    if (!profile) return null;
+    const navigate = useNavigate();
+    if (!profile) {
+        navigate(AUTH_BASE_URL)
+        return null
+    }
     const [username, setUsername] = useState<string>(profile.username);
-    const onFinish: FormProps<EditUserFormType>['onFinish'] = (values) => {
+    const onFinish: FormProps<EditUserFormType>['onFinish'] = async (values) => {
         const {password, new_password} = values;
         const newUser = {
             username: getNewOrUndefined(profile.username, username),
             password,
             new_password: !new_password ? undefined : new_password,
         };
-        authPatch(newUser).then(() => authGet()).then((r) => setProfile(r));
+        try {
+            await authPatch(newUser);
+            if (new_password) {
+                return navigate(AUTH_BASE_URL, {state: {logout: true, username: username}});
+            }
+            return authGet().then((r) => setProfile(r));
+        } catch (e) {
+            console.error(e)
+        }
     }
     return (
         <Flex align='center' justify='center' className={styles.layout}>
