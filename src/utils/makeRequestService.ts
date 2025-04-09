@@ -34,5 +34,5 @@ export const makeRequestService = (baseUrl: string) => <T>({
     }
 ).then(r => {
     if (!r.ok) throw new ApiError(r.status, r.statusText);
-    return r.headers.get('content-type') !== 'application/json; charset=utf-8' ? r.text() : r.json();
+    return r.headers.get('content-type') === 'application/json; charset=utf-8' ? r.json() : r.text();
 });
