@@ -1,4 +1,5 @@
 import {ApiError} from "../errors/ApiError.ts";
+import {isEmpty, isObject} from "./isCheckers.ts";
 
 type BaseRequestParams = {
     url: string;
@@ -6,10 +7,6 @@ type BaseRequestParams = {
     params?: Record<string, string | number | boolean>;
     data?: any;
 };
-
-const isEmpty = (v?: Record<any, any>) => !v || Object.keys(v).length === 0;
-
-const isObject = (v: any) => v !== null && typeof v === 'object';
 
 const transformData = (data: any) => {
     if (!data) return undefined;
