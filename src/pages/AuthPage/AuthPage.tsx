@@ -10,6 +10,7 @@ import {useProfile} from "../../stores/ProfileStore.ts";
 
 export const AuthPage: FC = () => {
     const [isLogin, setIsLogin] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const location = useLocation();
     const navigate = useNavigate();
     const {profile, logout} = useProfile();
@@ -17,20 +18,20 @@ export const AuthPage: FC = () => {
     useEffect(() => {
         if (location.state?.logout && profile) {
             void logout();
+            navigate(location.pathname, {replace: true})
         }
         if (location.state?.username) {
             form.setFieldValue('username', location.state.username);
+            navigate(location.pathname, {replace: true})
         }
     }, [location.state]);
-    // useEffect(() => {
-    //     if (location.state?.username && isLogin) {
-    //         form.setFieldValue('username', location.state.username);
-    //     } else {
-    //         form.resetFields(['username']);
-    //     }
-    // }, [location.state, isLogin]);
-    const onLogin = async (values: AuthLoginPost) =>
-        authLoginPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
+    const onLogin = async (values: AuthLoginPost) => {
+        setIsLoading(true);
+        authLoginPost(values)
+            .then(() => navigate(BASE_URL))
+            .catch(e => console.error(e))
+            .finally(() => setIsLoading(false));
+    };
     const onSignup = async (values: AuthSignupPost) =>
         authSignupPost(values).then(() => navigate(BASE_URL)).catch((e) => console.error(e));
     return (
@@ -68,7 +69,7 @@ export const AuthPage: FC = () => {
                     >
                         <Input.Password />
                     </Form.Item>
-                    <Button type="primary" htmlType="submit">Submit</Button>
+                    <Button type="primary" htmlType="submit" loading={isLoading}>Submit</Button>
                 </Form>
             </Card>
         </Flex>

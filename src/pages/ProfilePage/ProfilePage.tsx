@@ -6,7 +6,7 @@ import {useProfile} from "../../stores/ProfileStore.ts";
 import {authPatch} from "../../api/auth/authPatch.ts";
 import {getNewOrUndefined} from "../../utils/getNewOrUndefined.ts";
 import {authGet} from "../../api/auth/authGet.ts";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {AUTH_BASE_URL} from "../../constants/constants.ts";
 
@@ -19,14 +19,16 @@ type EditUserFormType = {
 const {Title, Paragraph} = Typography;
 
 export const ProfilePage: PageType = () => {
+    const navigate = useNavigate();
     const {profile, setProfile} = useProfile();
     const [form] = Form.useForm();
-    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     if (!profile) {
-        navigate(AUTH_BASE_URL)
-        return null
+        navigate(AUTH_BASE_URL);
+        return null;
     }
     const [username, setUsername] = useState<string>(profile.username);
+    useEffect(() => setUsername(profile.username), [profile]);
     const onFinish: FormProps<EditUserFormType>['onFinish'] = async (values) => {
         const {password, new_password} = values;
         const newUser = {
@@ -34,16 +36,21 @@ export const ProfilePage: PageType = () => {
             password,
             new_password: !new_password ? undefined : new_password,
         };
+        if (!newUser.username && !newUser.new_password) return null;
         try {
+            setIsLoading(true);
             await authPatch(newUser);
             if (new_password) {
                 return navigate(AUTH_BASE_URL, {state: {logout: true, username: username}});
             }
             return authGet().then((r) => setProfile(r));
         } catch (e) {
-            console.error(e)
+            console.error(e);
+        } finally {
+            authGet().then((r) => setProfile(r))
+            setIsLoading(false);
         }
-    }
+    };
     return (
         <Flex align='center' justify='center' className={styles.layout}>
             <Card className={styles.card}>
@@ -93,7 +100,7 @@ export const ProfilePage: PageType = () => {
                         <Input.Password/>
                     </Form.Item>
                     <Flex justify='end'>
-                        <Button type="primary" htmlType="submit">Edit</Button>
+                        <Button type="primary" htmlType="submit" loading={isLoading}>Edit</Button>
                     </Flex>
                 </Form>
             </Card>
