@@ -30,7 +30,7 @@ export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTa
         const activeItems = tasks.filter((t) => !t.completed)
         return (
             <div className={styles.itemsLeft}>
-                {activeItems.length} items left
+                {activeItems.length} {activeItems.length <= 1 ? 'item' : 'items'} left
             </div>
         )
     };
