@@ -1,6 +1,5 @@
 /* eslint-disable */
 /* tslint:disable */
-// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -76,6 +75,17 @@ export interface TaskPatch {
 
 export interface TaskCompleted {
   completed: boolean;
+}
+
+export interface UsersExistsPost {
+  /** @example "dylandoe" */
+  username: string;
+}
+
+export interface UsersExistsPostResponse {
+  /** @example "dylandoe" */
+  username: string;
+  exists: boolean;
 }
 
 export interface Error {
