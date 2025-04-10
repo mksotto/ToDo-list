@@ -8,8 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "test": "vitest",
-    "start": "npm run build && node -d dist",
-    "preview": "vite preview",
+    "start": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
