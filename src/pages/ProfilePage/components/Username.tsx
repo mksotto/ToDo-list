@@ -35,5 +35,5 @@ export const Username: FC<Props> = ({username, setUsername}) => {
         >
             {username}
         </Typography.Title>
-    )
-}
+    );
+};
