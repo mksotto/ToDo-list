@@ -29,7 +29,7 @@ export const makeRequestService = (baseUrl: string) => <T>({
         body: transformData(data),
         credentials: 'include',
     }
-).then(r => {
-    if (!r.ok) throw new ApiError(r.status, r.statusText);
+).then(async r => {
+    if (!r.ok) throw new ApiError(r.status, await r.text());
     return r.headers.get('content-type') === 'application/json; charset=utf-8' ? r.json() : r.text();
 });

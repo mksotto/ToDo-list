@@ -1,5 +1,6 @@
 /* eslint-disable */
 /* tslint:disable */
+// @ts-nocheck
 /*
  * ---------------------------------------------------------------
  * ## THIS FILE WAS GENERATED VIA SWAGGER-TYPESCRIPT-API        ##
@@ -88,6 +89,20 @@ export interface UsersExistsPostResponse {
   exists: boolean;
 }
 
-export interface Error {
-  message: string;
-}
+export type BadRequestError =
+  | "BadRequest"
+  | "InvalidUsername"
+  | "InvalidEmail"
+  | "InvalidPassword"
+  | "MissingCredentials"
+  | "MissingProperty";
+
+export type UnauthorizedError = "Unauthorized";
+
+export type ForbiddenError = "Forbidden";
+
+export type NotFoundError = "Not found";
+
+export type ConflictError = "Conflict" | "UsernameExists" | "EmailExists";
+
+export type InternalServerError = "InternalServerError";
