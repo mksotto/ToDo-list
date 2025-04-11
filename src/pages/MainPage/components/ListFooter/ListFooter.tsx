@@ -1,17 +1,16 @@
 import {Tabs, TabsProps} from "antd";
 import styles from './ListFooter.module.css';
 import {FC} from "react";
-import {Task} from "../../../../types/base.ts";
-import {LOCALSTORAGE_KEY} from "../../../../constants/constants.ts";
+import {tasksCompletedDelete} from "../../../../api/tasks/tasksCompletedDelete.ts";
+import {useTasks} from "../../../../queries/useTasks.ts";
 
 type Props = {
-    tasks: Task[];
-    setTasks: (tasks: Task[]) => void;
     currentTab: string;
     setCurrentTab: (tab: string) => void;
 };
 
-export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTab}) => {
+export const ListFooter: FC<Props> = ({currentTab, setCurrentTab}) => {
+    const {data: tasks, refetch} = useTasks();
     const items: TabsProps['items'] = [
         {
             key: 'all',
@@ -35,10 +34,13 @@ export const ListFooter: FC<Props> = ({tasks, setTasks, currentTab, setCurrentTa
         )
     };
     const ClearCompleted: FC = () => {
-        const handleDelete = () => {
-            const modifiedTasks = tasks.filter((t) => !t.completed);
-            setTasks(modifiedTasks);
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(modifiedTasks));
+        const handleDelete = async () => {
+            try {
+                await tasksCompletedDelete();
+                void refetch();
+            } catch (e) {
+                console.error(e);
+            }
         };
         return (
             <div

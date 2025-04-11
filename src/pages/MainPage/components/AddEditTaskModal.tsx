@@ -1,13 +1,16 @@
 import {FC} from "react";
 import {DatePicker, DatePickerProps, Form, Input, Modal} from "antd";
-import {Task} from "../../../types/base.ts";
-import {uuidv7} from "uuidv7";
-import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
+import {Task} from "../../../types/domain/todo-list.ts";
 import dayjs from "dayjs";
+import {tasksPost} from "../../../api/tasks/tasksPost.ts";
+import {tasksIdPatch} from "../../../api/tasks/tasksIdPatch.ts";
+import {getNewOrNullOrUndefined, getNewOrUndefined} from "../../../utils/getNewOrUndefined.ts";
+import {useNavigate} from "react-router-dom";
+import {AUTH_BASE_URL} from "../../../constants/constants.ts";
+import {useTasks} from "../../../queries/useTasks.ts";
+import {useProfile} from "../../../stores/ProfileStore.ts";
 
 type Props = {
-    tasks: Task[];
-    setTasks: (callback: (value: Task[]) => Task[]) => void,
     editableTask: Task | null;
     deleteEditableTask: () => void;
     isAddModalOpen: boolean,
@@ -16,56 +19,47 @@ type Props = {
 
 type TaskFormType = {
     name: string,
-    description?: string,
-    deadline?: DatePickerProps['value'],
+    description: string | null,
+    deadline: DatePickerProps['value'] | null,
 };
 
-export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, tasks, setTasks, isAddModalOpen, onClose}) => {
+export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, isAddModalOpen, onClose}) => {
     const [form] = Form.useForm();
+    const {profile} = useProfile();
+    const {refetch} = useTasks();
+    const navigate = useNavigate();
     const initialValues: TaskFormType | undefined = editableTask ? {
         name: editableTask.name,
-        description: editableTask.description || '',
+        description: editableTask.description,
         deadline: editableTask.deadline ? dayjs(editableTask.deadline) : null,
     } : undefined;
-    const onSubmit = (values: TaskFormType) => {
-        setTasks(() => {
-            const editedTasks = [
-                ...tasks,
-                {
-                    id: uuidv7(),
-                    name: values.name,
-                    description: values.description || null,
-                    deadline: values.deadline || null,
-                    completed: false,
-                }
-            ];
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(editedTasks));
-            return editedTasks;
-        });
-        onClose();
-    };
     const onCancel = () => {
         deleteEditableTask();
         onClose();
     };
+    const onCreate = (values: TaskFormType) => {
+        if (!profile) return navigate(AUTH_BASE_URL)
+        const newTask = {
+            name: values.name,
+            description: values.description || undefined,
+            deadline: values.deadline?.toISOString(),
+        };
+        tasksPost(newTask)
+            .then(() => refetch())
+            .catch(e => console.error(e))
+            .finally(onClose);
+    };
     const onEdit = (values: TaskFormType) => {
-        setTasks(() => {
-            const editedTasks = tasks.map((t) => {
-                if (t.id === editableTask!.id) {
-                    return ({
-                        ...t,
-                        name: values.name,
-                        description: values.description || null,
-                        deadline: values.deadline || null,
-                    })
-                } else {
-                    return t
-                }
-            });
-            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(editedTasks));
-            return editedTasks;
-        });
-        onCancel();
+        if (!editableTask) return null;
+        const editedTask = {
+            name: getNewOrUndefined(editableTask.name, values.name),
+            description: getNewOrNullOrUndefined(editableTask.description, values.description),
+            deadline: getNewOrNullOrUndefined(editableTask.deadline, values.deadline?.toISOString()),
+        };
+        tasksIdPatch(editableTask.id, editedTask)
+            .then(() => refetch())
+            .catch(e => console.error(e))
+            .finally(onCancel);
     };
     return (
         <Modal
@@ -79,7 +73,7 @@ export const AddEditTaskModal: FC<Props> = ({editableTask, deleteEditableTask, t
         >
             <Form
                 form={form}
-                onFinish={editableTask ? onEdit : onSubmit}
+                onFinish={editableTask ? onEdit : onCreate}
                 labelCol={{span: 6}}
                 wrapperCol={{span: 18}}
                 preserve={false}
