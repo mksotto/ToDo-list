@@ -29,10 +29,7 @@ export const Username: FC<Props> = ({username, setUsername}) => {
         }
     };
     return (
-        <Typography.Title
-            level={2}
-            editable={{onChange}}
-        >
+        <Typography.Title level={2} editable={{onChange}}>
             {username}
         </Typography.Title>
     );
