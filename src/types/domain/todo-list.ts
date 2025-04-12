@@ -89,7 +89,7 @@ export interface UsersExistsPostResponse {
   exists: boolean;
 }
 
-export type BadRequestError =
+export type TBadRequestError =
   | "BadRequest"
   | "InvalidUsername"
   | "InvalidEmail"
@@ -97,12 +97,12 @@ export type BadRequestError =
   | "MissingCredentials"
   | "MissingProperty";
 
-export type UnauthorizedError = "Unauthorized";
+export type TUnauthorizedError = "Unauthorized";
 
-export type ForbiddenError = "Forbidden";
+export type TForbiddenError = "Forbidden";
 
-export type NotFoundError = "Not found";
+export type TNotFoundError = "Not found";
 
-export type ConflictError = "Conflict" | "UsernameExists" | "EmailExists";
+export type TConflictError = "Conflict" | "UsernameExists" | "EmailExists";
 
-export type InternalServerError = "InternalServerError";
+export type TInternalServerError = "InternalServerError";

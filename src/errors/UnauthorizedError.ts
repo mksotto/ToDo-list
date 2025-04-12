@@ -1,8 +1,12 @@
+import {TUnauthorizedError} from "../types/domain/todo-list.ts";
+
 export class UnauthorizedError extends Error {
     code: number = 401;
+    reason: TUnauthorizedError;
 
-    constructor(message: string) {
-        super(message);
+    constructor(reason: string) {
+        super();
+        this.reason = reason as TUnauthorizedError;
     };
 }
 

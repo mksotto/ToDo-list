@@ -1,8 +1,12 @@
+import {TConflictError} from "../types/domain/todo-list.ts";
+
 export class ConflictError extends Error {
     code: number = 409;
+    reason: TConflictError;
 
-    constructor(message: string) {
-        super(message);
+    constructor(reason: string) {
+        super();
+        this.reason = reason as TConflictError;
     };
 }
 

@@ -1,8 +1,12 @@
+import {TInternalServerError} from "../types/domain/todo-list.ts";
+
 export class InternalServerError extends Error {
     code: number = 500;
+    reason: TInternalServerError;
 
-    constructor(message: string) {
-        super(message);
+    constructor(reason: string) {
+        super();
+        this.reason = reason as TInternalServerError;
     };
 }
 

@@ -1,8 +1,12 @@
+import {TForbiddenError} from "../types/domain/todo-list.ts";
+
 export class ForbiddenError extends Error {
     code: number = 403;
+    reason: TForbiddenError;
 
-    constructor(message: string) {
-        super(message);
+    constructor(reason: string) {
+        super();
+        this.reason = reason as TForbiddenError;
     };
 }
 

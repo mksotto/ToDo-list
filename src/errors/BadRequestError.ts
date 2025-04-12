@@ -1,4 +1,4 @@
-import {BadRequestError as TBadRequestError} from './../types/domain/todo-list.ts'
+import {TBadRequestError} from './../types/domain/todo-list.ts'
 
 export class BadRequestError extends Error {
     code: number = 400;
