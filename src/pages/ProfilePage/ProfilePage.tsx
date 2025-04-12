@@ -40,20 +40,26 @@ export const ProfilePage: PageType = () => {
             if (new_password) {
                 return navigate(AUTH_BASE_URL, {state: {logout: true, username}});
             }
-            return authGet().then((r) => setProfile(r));
+            return message.open({
+                type: 'success',
+                content: 'Username successfully changed'
+            })
         } catch (e) {
             if (isBadRequestError(e) && e.reason === 'InvalidPassword') {
+                await form.validateFields({validateOnly: true});
                 return message.open({
                     type: 'error',
                     content: 'Incorrect password!'
                 });
             }
+            console.error(e);
             return message.open({
                 type: 'error',
                 content: 'Something went wrong!'
             });
         } finally {
-            authGet().then((r) => setProfile(r))
+            authGet().then((r) => setProfile(r));
+            form.resetFields();
             setIsLoading(false);
         }
     };
@@ -74,17 +80,34 @@ export const ProfilePage: PageType = () => {
                         label='Current password'
                         className={styles.passwordItem}
                         rules={[
-                            {required: true, message: 'Enter your current password'}
+                            {required: true, message: 'Enter your current password'},
                         ]}
                     >
                         <Input.Password/>
                     </Form.Item>
-                    <Form.Item name='new_password' label='New password' className={styles.passwordItem}>
+                    <Form.Item
+                        name='new_password'
+                        label='New password'
+                        className={styles.passwordItem}
+                        validateDebounce={500}
+                        rules={[
+                            {min: 8, message: 'Password must contain at least 8 characters'},
+                            ({ getFieldValue }) => ({
+                                validator(_, value) {
+                                    if (getFieldValue('password') === value) {
+                                        return Promise.reject(new Error('New password must be different from the current'));
+                                    }
+                                    return Promise.resolve();
+                                },
+                            }),
+                        ]}
+                    >
                         <Input.Password/>
                     </Form.Item>
                     <Form.Item
                         name='repeat_new_password'
                         label='Confirm new password'
+                        validateDebounce={500}
                         rules={[
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
@@ -107,7 +130,7 @@ export const ProfilePage: PageType = () => {
                 </Form>
             </Card>
         </Flex>
-    )
-}
+    );
+};
 
 ProfilePage.loader = checkAuthRequired;

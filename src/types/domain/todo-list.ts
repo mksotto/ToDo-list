@@ -101,7 +101,7 @@ export type TUnauthorizedError = "Unauthorized";
 
 export type TForbiddenError = "Forbidden";
 
-export type TNotFoundError = "Not found";
+export type TNotFoundError = "NotFound";
 
 export type TConflictError = "Conflict" | "UsernameExists" | "EmailExists";
 

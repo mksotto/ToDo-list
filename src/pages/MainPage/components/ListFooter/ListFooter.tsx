@@ -3,6 +3,7 @@ import styles from './ListFooter.module.css';
 import {FC} from "react";
 import {tasksCompletedDelete} from "../../../../api/tasks/tasksCompletedDelete.ts";
 import {useTasks} from "../../../../queries/useTasks.ts";
+import {useProfile} from "../../../../stores/ProfileStore.ts";
 
 type Props = {
     currentTab: string;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export const ListFooter: FC<Props> = ({currentTab, setCurrentTab}) => {
+    const {profile} = useProfile();
     const {data: tasks, refetch} = useTasks();
     const items: TabsProps['items'] = [
         {
@@ -45,7 +47,7 @@ export const ListFooter: FC<Props> = ({currentTab, setCurrentTab}) => {
         return (
             <div
                 className={styles.deleteCompleted}
-                onClick={handleDelete}
+                onClick={profile ? handleDelete : undefined}
             >
                 Clear completed
             </div>

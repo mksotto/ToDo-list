@@ -17,23 +17,21 @@ type Props = {
 
 export const TaskItem: FC<Props> = ({task, setIsAddModalOpen, setEditableTask}) => {
     const {refetch} = useTasks();
-
     const handleCompletion = (id: Task['id'], value: boolean) =>
         tasksIdCompletedPut(id, {completed: value})
             .then(() => refetch())
             .catch(e => console.error(e));
-
     const handleDeleteTask = (task: Task) =>
         tasksIdDelete(task.id)
             .then(() => refetch())
             .catch(e => console.error(e));
-
     const makeMinutesDebounce = (task: Task, minutes: number) => {
         if (task.deadline && !task.completed) {
             const dateNowPlusDebounce = Date.now() + minutes * 60 * 1000;
             const deadline = Date.parse(task.deadline);
             return task.deadline ? deadline <= dateNowPlusDebounce : false;
         }
+        return false;
     };
     const lessThanHourToGo = (task: Task) => makeMinutesDebounce(task, 60);
     const lessThanFifteenToGo = (task: Task) => makeMinutesDebounce(task, 15);
