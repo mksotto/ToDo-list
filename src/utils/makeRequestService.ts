@@ -1,5 +1,5 @@
-import {ApiError} from "../errors/ApiError.ts";
 import {isEmpty, isObject} from "./isCheckers.ts";
+import {errorHandler} from "./errorHandler.ts";
 
 type BaseRequestParams = {
     url: string;
@@ -30,6 +30,6 @@ export const makeRequestService = (baseUrl: string) => <T>({
         credentials: 'include',
     }
 ).then(async r => {
-    if (!r.ok) throw new ApiError(r.status, await r.text());
+    if (!r.ok) await errorHandler(r);
     return r.headers.get('content-type') === 'application/json; charset=utf-8' ? r.json() : r.text();
 });

@@ -1,7 +1,7 @@
 import {PageType} from "../../types/PageType.ts";
 import {checkAuthRequired} from "../../modules/checkAuth.ts";
 import styles from './ProfilePage.module.css';
-import {Card, Flex, Form, Typography, Input, Button, FormProps} from "antd";
+import {Card, Flex, Form, Typography, Input, Button, FormProps, App} from "antd";
 import {useProfile} from "../../stores/ProfileStore.ts";
 import {authPatch} from "../../api/auth/authPatch.ts";
 import {getNewOrUndefined} from "../../utils/getNewOrUndefined.ts";
@@ -10,6 +10,7 @@ import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {AUTH_BASE_URL} from "../../constants/constants.ts";
 import {Username} from "./components/Username.tsx";
+import {isBadRequestError} from "../../errors/BadRequestError.ts";
 
 type EditUserFormType = {
     password: string;
@@ -21,6 +22,7 @@ export const ProfilePage: PageType = () => {
     const {profile, setProfile} = useProfile();
     const [form] = Form.useForm();
     const navigate = useNavigate();
+    const {message} = App.useApp();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [username, setUsername] = useState<string | undefined>(profile?.username);
     useEffect(() => setUsername(profile?.username), [profile]);
@@ -40,7 +42,16 @@ export const ProfilePage: PageType = () => {
             }
             return authGet().then((r) => setProfile(r));
         } catch (e) {
-            console.error(e);
+            if (isBadRequestError(e) && e.reason === 'InvalidPassword') {
+                return message.open({
+                    type: 'error',
+                    content: 'Incorrect password!'
+                });
+            }
+            return message.open({
+                type: 'error',
+                content: 'Something went wrong!'
+            });
         } finally {
             authGet().then((r) => setProfile(r))
             setIsLoading(false);
