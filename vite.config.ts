@@ -6,12 +6,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/ToDo-list/api': {
+      '/api': {
         target: 'http://localhost:8000',
         changeOrigin: true,
-        rewrite: path => path.replace('/ToDo-list/api', ''),
+        rewrite: path => path.replace('/api', ''),
       },
     },
   },
-  base: "/ToDo-list",
 })
