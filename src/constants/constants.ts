@@ -1,6 +1,6 @@
 export const LOCALSTORAGE_KEY = 'tasks';
 
-export const BASE_URL = '/ToDo-list/';
+export const BASE_URL = '/';
 
 export const AUTH_BASE_URL = `${BASE_URL}auth`;
 export const PROFILE_BASE_URL = `${BASE_URL}profile`;
