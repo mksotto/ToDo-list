@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import {MainPage} from "../MainPage.tsx";
-import {Task} from "../../../types/base.ts";
+import {Task} from "../../../types/domain/todo-list.ts";
 import {LOCALSTORAGE_KEY} from "../../../constants/constants.ts";
 
 describe('MainPage', () => {
