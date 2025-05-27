@@ -31,5 +31,5 @@ export const makeRequestService = (baseUrl: string) => <T>({
     }
 ).then(async r => {
     if (!r.ok) await errorHandler(r);
-    return r.headers.get('content-type') === 'application/json; charset=utf-8' ? r.json() : r.text();
+    return r.headers.get('content-type')?.includes('application/json') ? r.json() : r.text();
 });
